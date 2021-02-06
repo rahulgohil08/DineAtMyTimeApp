@@ -6,30 +6,31 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.experiments.dineatmytime.MainActivity;
 import com.experiments.dineatmytime.R;
 import com.experiments.dineatmytime.adapters.RestaurantAdapter;
 import com.experiments.dineatmytime.databinding.ActivityDashboardBinding;
-import com.experiments.dineatmytime.model.Restaurant;
+import com.experiments.dineatmytime.model.RestaurantData;
 import com.experiments.dineatmytime.network.Api;
 import com.experiments.dineatmytime.network.AppConfig;
 import com.experiments.dineatmytime.network.ServerResponse;
+import com.experiments.dineatmytime.ui.login.Login;
 import com.experiments.dineatmytime.utils.Config;
+import com.experiments.dineatmytime.utils.SharedPrefManager;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RestaurantAdapter.RestaurantInterface {
 
     private ActivityDashboardBinding binding;
     private ActionBarDrawerToggle toggle;
@@ -37,7 +38,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     private final Activity activity = this;
 
-    private List<Restaurant> restaurantList = new ArrayList<>();
+    private List<RestaurantData> restaurantList = new ArrayList<>();
+
+    private SharedPrefManager sharedPrefManager;
 
 
     @Override
@@ -50,6 +53,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         init();
         clickListener();
 
+
     }
 
 
@@ -57,6 +61,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
 
     private void init() {
+
+        sharedPrefManager = new SharedPrefManager(activity);
 
         toggle = new ActionBarDrawerToggle(this, binding.drawer, R.string.open, R.string.close);
 
@@ -67,7 +73,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         binding.nav.setNavigationItemSelectedListener(this);
 
-        restaurantAdapter = new RestaurantAdapter(activity, restaurantList);
+        restaurantAdapter = new RestaurantAdapter(activity, restaurantList, this);
 
         binding.includedContent.recyclerView.setHasFixedSize(true);
         binding.includedContent.recyclerView.setAdapter(restaurantAdapter);
@@ -76,6 +82,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         getRestaurantDataFromServer();
 
     }
+
+
+
 
 
     /*----------------------------- Get Restaurant Data From Server ----------------------------*/
@@ -148,6 +157,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
             case R.id.settings:
                 Config.showToast(activity, "Settings");
+                sharedPrefManager.clear();
+                openActivity(Login.class);
+
                 return true;
 
             default:
@@ -163,4 +175,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         startActivity(intent);
     }
 
+    @Override
+    public void onClick(RestaurantData restaurant) {
+        Config.showToast(activity, restaurant.getResName());
+    }
 }

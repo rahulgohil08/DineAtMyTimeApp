@@ -7,7 +7,9 @@ public class Config {
 
     public static int user_id = -1;
 
-    public static String url = "http://192.168.0.112/dine_my_time/";
+    //    public static String url = "http://192.168.0.140/dine_my_time/";
+//    public static String url = "http://192.168.43.66/dine_my_time/";
+    public static String url = "http://192.168.137.1/dine_my_time/";
 
 //    http://192.168.0.112/dine_my_time/restaurants/95502ebb7eea5108dc43ed65970151a8.jpg
 
