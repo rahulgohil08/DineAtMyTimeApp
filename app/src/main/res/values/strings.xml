@@ -3,4 +3,17 @@
 
     <string name="open">Open</string>
     <string name="close">Close</string>
+
+    <string name="registration">Registration</string>
+    <string name="address">Address</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="todo">TODO</string>
+    <string name="register">Register</string>
+    <string name="login">login</string>
+    <string name="registerhere">New User ? <u> Register </u></string>
+    <string name="loginhere">Already have an Account? <u>Login </u></string>
+    <string name="get_started">Get Started</string>
 </resources>

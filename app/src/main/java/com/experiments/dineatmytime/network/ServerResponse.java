@@ -1,6 +1,7 @@
 package com.experiments.dineatmytime.network;
 
 import com.experiments.dineatmytime.model.Restaurant;
+import com.experiments.dineatmytime.model.RestaurantData;
 import com.experiments.dineatmytime.model.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -24,7 +25,7 @@ public class ServerResponse {
 
     @SerializedName("restaurants")
     @Expose
-    private List<Restaurant> restaurantList;
+    private List<RestaurantData> restaurantList;
 
     public Boolean getError() {
         return error;
@@ -52,11 +53,11 @@ public class ServerResponse {
     }
 
 
-    public List<Restaurant> getRestaurantList() {
+    public List<RestaurantData> getRestaurantList() {
         return restaurantList;
     }
 
-    public void setRestaurantList(List<Restaurant> restaurantList) {
+    public void setRestaurantList(List<RestaurantData> restaurantList) {
         this.restaurantList = restaurantList;
     }
 }
