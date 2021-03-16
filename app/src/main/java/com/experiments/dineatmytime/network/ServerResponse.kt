@@ -1,62 +1,39 @@
-package com.experiments.dineatmytime.network;
+package com.experiments.dineatmytime.network
 
-import com.experiments.dineatmytime.model.Restaurant;
-import com.experiments.dineatmytime.model.User;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.experiments.dineatmytime.model.*
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
-import java.util.List;
-
-public class ServerResponse {
-
-
+class ServerResponse {
     @SerializedName("error")
     @Expose
-    private Boolean error;
+    var error: Boolean? = null
 
     @SerializedName("message")
     @Expose
-    private String message;
+    var message: String? = null
 
     @SerializedName("user")
     @Expose
-    private User user;
+    var user: User? = null
 
     @SerializedName("restaurants")
     @Expose
-    private List<Restaurant> restaurantList;
+    var restaurantList: List<Restaurant>? = null
 
-    public Boolean getError() {
-        return error;
-    }
+    @SerializedName("restaurant")
+    @Expose
+    var restaurantDetails: RestaurantDetails? = null
 
-    public void setError(Boolean error) {
-        this.error = error;
-    }
+    @SerializedName("menus")
+    @Expose
+    var menuList: List<Menu>? = null
 
-    public String getMessage() {
-        return message;
-    }
+    @SerializedName("tables")
+    @Expose
+    var tableList: List<Table>? = null
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-
-    public List<Restaurant> getRestaurantList() {
-        return restaurantList;
-    }
-
-    public void setRestaurantList(List<Restaurant> restaurantList) {
-        this.restaurantList = restaurantList;
-    }
+    @SerializedName("bookings")
+    @Expose
+    var bookingList: List<Booking>? = null
 }

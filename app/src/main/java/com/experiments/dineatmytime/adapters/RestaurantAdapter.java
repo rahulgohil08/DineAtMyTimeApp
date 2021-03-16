@@ -19,10 +19,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     private Context context;
     private List<Restaurant> restaurantList;
+    private RestaurantInterface restaurantInterface;
 
-    public RestaurantAdapter(Context context, List<Restaurant> restaurantList) {
+
+    public RestaurantAdapter(Context context, List<Restaurant> restaurantList, RestaurantInterface restaurantInterface) {
         this.context = context;
         this.restaurantList = restaurantList;
+        this.restaurantInterface = restaurantInterface;
     }
 
 
@@ -48,7 +51,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
 
         holder.itemView.setOnClickListener(view -> {
-
+            restaurantInterface.onClick(restaurant);
         });
 
     }
@@ -68,6 +71,11 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
             this.binding = binding;
         }
+    }
+
+
+    public interface RestaurantInterface {
+        void onClick(Restaurant restaurant);
     }
 
 }

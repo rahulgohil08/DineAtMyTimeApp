@@ -15,10 +15,16 @@ import com.experiments.dineatmytime.R;
 import com.experiments.dineatmytime.adapters.RestaurantAdapter;
 import com.experiments.dineatmytime.databinding.ActivityDashboardBinding;
 import com.experiments.dineatmytime.model.Restaurant;
+import com.experiments.dineatmytime.model.RestaurantDetails;
 import com.experiments.dineatmytime.network.Api;
 import com.experiments.dineatmytime.network.AppConfig;
 import com.experiments.dineatmytime.network.ServerResponse;
+import com.experiments.dineatmytime.ui.booking.BookingHistoryActivity;
+import com.experiments.dineatmytime.ui.login.Login;
+import com.experiments.dineatmytime.ui.restaurant.BookingActivity;
+import com.experiments.dineatmytime.ui.restaurant.RestaurantDetailsActivity;
 import com.experiments.dineatmytime.utils.Config;
+import com.experiments.dineatmytime.utils.SharedPrefManager;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
@@ -29,7 +35,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RestaurantAdapter.RestaurantInterface {
 
     private ActivityDashboardBinding binding;
     private ActionBarDrawerToggle toggle;
@@ -38,6 +44,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     private final Activity activity = this;
 
     private List<Restaurant> restaurantList = new ArrayList<>();
+    private SharedPrefManager sharedPrefManager;
 
 
     @Override
@@ -46,6 +53,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        sharedPrefManager = new SharedPrefManager(activity);
 
         init();
         clickListener();
@@ -63,11 +72,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         binding.drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        setSupportActionBar(binding.includedContent.includedToolbar.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_toggle);
 
         binding.nav.setNavigationItemSelectedListener(this);
 
-        restaurantAdapter = new RestaurantAdapter(activity, restaurantList);
+        restaurantAdapter = new RestaurantAdapter(activity, restaurantList, this);
 
         binding.includedContent.recyclerView.setHasFixedSize(true);
         binding.includedContent.recyclerView.setAdapter(restaurantAdapter);
@@ -136,18 +148,18 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         switch (item.getItemId()) {
 
             case R.id.home:
-                Config.showToast(activity, "Home");
-                openActivity(MainActivity.class);
+                openActivity(DashboardActivity.class);
                 return true;
 
 
-            case R.id.search:
-                Config.showToast(activity, "Search");
+            case R.id.logout:
+                sharedPrefManager.clear();
+                openActivity(Login.class);
                 return true;
 
 
-            case R.id.settings:
-                Config.showToast(activity, "Settings");
+            case R.id.booking_history:
+                openActivity(BookingHistoryActivity.class);
                 return true;
 
             default:
@@ -163,4 +175,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         startActivity(intent);
     }
 
+
+    @Override
+    public void onClick(Restaurant restaurant) {
+        Intent intent = new Intent(activity, RestaurantDetailsActivity.class);
+        intent.putExtra("res_id", Integer.parseInt(restaurant.getResId()));
+        startActivity(intent);
+    }
 }
