@@ -4,25 +4,25 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.experiments.dineatmytime.R;
 import com.experiments.dineatmytime.databinding.LayoutRestaurantsBinding;
 import com.experiments.dineatmytime.model.Restaurant;
-import com.experiments.dineatmytime.model.RestaurantData;
 import com.experiments.dineatmytime.utils.Config;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
     private Context context;
-    private List<RestaurantData> restaurantList;
+    private List<Restaurant> restaurantList;
     private RestaurantInterface restaurantInterface;
 
-    public RestaurantAdapter(Context context, List<RestaurantData> restaurantList, RestaurantInterface restaurantInterface) {
+
+    public RestaurantAdapter(Context context, List<Restaurant> restaurantList, RestaurantInterface restaurantInterface) {
         this.context = context;
         this.restaurantList = restaurantList;
         this.restaurantInterface = restaurantInterface;
@@ -40,7 +40,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        RestaurantData restaurant = restaurantList.get(position);
+        Restaurant restaurant = restaurantList.get(position);
 
         holder.binding.name.setText(restaurant.getResName());
 
@@ -74,8 +74,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     }
 
 
-   public interface RestaurantInterface {
-        void onClick(RestaurantData restaurant);
+    public interface RestaurantInterface {
+        void onClick(Restaurant restaurant);
     }
 
 }

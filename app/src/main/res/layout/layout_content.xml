@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
+
+
+    <include
+        android:id="@+id/included_toolbar"
+        layout="@layout/toolbar" />
 
 
     <androidx.recyclerview.widget.RecyclerView
-        tools:listitem="@layout/layout_restaurants"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/included_toolbar"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2" />
+        app:spanCount="2"
+        tools:listitem="@layout/layout_restaurants" />
 
 
     <ProgressBar

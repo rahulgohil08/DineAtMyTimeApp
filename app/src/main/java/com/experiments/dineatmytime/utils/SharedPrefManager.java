@@ -12,7 +12,7 @@ public class SharedPrefManager {
     private final SharedPreferences.Editor editor;
 
     @SuppressLint("CommitPrefEdits")
-    public SharedPrefManager ( Context context ) {
+    public SharedPrefManager(Context context ) {
         this.context = context;
         SharedPreferences prefs = context.getSharedPreferences ( PREFS_NAME , 0 );
         editor = prefs.edit ( );
@@ -58,4 +58,3 @@ public class SharedPrefManager {
         editor.apply ( );
     }
 }
-

@@ -34,8 +34,7 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        setContentView(R.layout.activity_login);
+
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -103,10 +102,8 @@ public class Login extends AppCompatActivity {
                     ServerResponse serverResponse = response.body();
 
                     if (!serverResponse.getError()) {
-                        Config.showToast(context, serverResponse.getUser().getName());
 
                         sendUserData(serverResponse.getUser());
-
 
 
                     } else {
@@ -124,6 +121,8 @@ public class Login extends AppCompatActivity {
         });
 
     }
+
+
 
 
     /*----------------------------------------------- Save User Data -----------------------------------------------*/

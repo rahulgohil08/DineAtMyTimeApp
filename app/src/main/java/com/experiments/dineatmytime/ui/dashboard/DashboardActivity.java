@@ -6,15 +6,23 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.experiments.dineatmytime.MainActivity;
 import com.experiments.dineatmytime.R;
 import com.experiments.dineatmytime.adapters.RestaurantAdapter;
 import com.experiments.dineatmytime.databinding.ActivityDashboardBinding;
-import com.experiments.dineatmytime.model.RestaurantData;
+import com.experiments.dineatmytime.model.Restaurant;
+import com.experiments.dineatmytime.model.RestaurantDetails;
 import com.experiments.dineatmytime.network.Api;
 import com.experiments.dineatmytime.network.AppConfig;
 import com.experiments.dineatmytime.network.ServerResponse;
+import com.experiments.dineatmytime.ui.booking.BookingHistoryActivity;
 import com.experiments.dineatmytime.ui.login.Login;
+import com.experiments.dineatmytime.ui.restaurant.BookingActivity;
+import com.experiments.dineatmytime.ui.restaurant.RestaurantDetailsActivity;
 import com.experiments.dineatmytime.utils.Config;
 import com.experiments.dineatmytime.utils.SharedPrefManager;
 import com.google.android.material.navigation.NavigationView;
@@ -22,9 +30,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,8 +43,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     private final Activity activity = this;
 
-    private List<RestaurantData> restaurantList = new ArrayList<>();
-
+    private List<Restaurant> restaurantList = new ArrayList<>();
     private SharedPrefManager sharedPrefManager;
 
 
@@ -50,9 +54,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        sharedPrefManager = new SharedPrefManager(activity);
+
         init();
         clickListener();
-
 
     }
 
@@ -62,14 +67,15 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     private void init() {
 
-        sharedPrefManager = new SharedPrefManager(activity);
-
         toggle = new ActionBarDrawerToggle(this, binding.drawer, R.string.open, R.string.close);
 
         binding.drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        setSupportActionBar(binding.includedContent.includedToolbar.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_toggle);
 
         binding.nav.setNavigationItemSelectedListener(this);
 
@@ -84,9 +90,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
 
-
-
-
     /*----------------------------- Get Restaurant Data From Server ----------------------------*/
 
 
@@ -95,7 +98,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Retrofit retrofit = AppConfig.getRetrofit();
         Api service = retrofit.create(Api.class);
 
-        Call<ServerResponse> call = service.getRestaurantList();
+        Call<ServerResponse> call = service.getRestaurantList(Config.user_id);
         call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
@@ -145,21 +148,18 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         switch (item.getItemId()) {
 
             case R.id.home:
-                Config.showToast(activity, "Home");
-                openActivity(MainActivity.class);
+                openActivity(DashboardActivity.class);
                 return true;
 
 
-            case R.id.search:
-                Config.showToast(activity, "Search");
-                return true;
-
-
-            case R.id.settings:
-                Config.showToast(activity, "Settings");
+            case R.id.logout:
                 sharedPrefManager.clear();
                 openActivity(Login.class);
+                return true;
 
+
+            case R.id.booking_history:
+                openActivity(BookingHistoryActivity.class);
                 return true;
 
             default:
@@ -175,8 +175,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         startActivity(intent);
     }
 
+
     @Override
-    public void onClick(RestaurantData restaurant) {
-        Config.showToast(activity, restaurant.getResName());
+    public void onClick(Restaurant restaurant) {
+        Intent intent = new Intent(activity, RestaurantDetailsActivity.class);
+        intent.putExtra("res_id", Integer.parseInt(restaurant.getResId()));
+        startActivity(intent);
     }
 }
