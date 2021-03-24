@@ -36,4 +36,8 @@ class ServerResponse {
     @SerializedName("bookings")
     @Expose
     var bookingList: List<Booking>? = null
+
+    @SerializedName("offers")
+    @Expose
+    var offerList: List<Offer>? = null
 }

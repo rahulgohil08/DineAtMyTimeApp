@@ -28,6 +28,7 @@ class PaymentActivity : AppCompatActivity(), PaymentResultListener {
     private var tableId = 0
     private var resId = 0
     private var amount = 0
+    private var discount = 0
     private lateinit var datetime: String
     private lateinit var menu: String
 
@@ -50,8 +51,10 @@ class PaymentActivity : AppCompatActivity(), PaymentResultListener {
         tableId = intent.getIntExtra("table_id", 0)
         resId = intent.getIntExtra("res_id", 0)
         amount = intent.getIntExtra("amount", 0)
+        discount = intent.getIntExtra("discount", 0)
         datetime = intent.getStringExtra("datetime").toString()
         menu = intent.getStringExtra("menu").toString()
+
 
         doPayment(amount)
     }
@@ -126,6 +129,7 @@ class PaymentActivity : AppCompatActivity(), PaymentResultListener {
                         amount = amount,
                         menu = menu,
                         datetime = datetime,
+                        discount = discount
                 )
 
 

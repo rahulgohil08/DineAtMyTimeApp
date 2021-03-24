@@ -98,7 +98,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Retrofit retrofit = AppConfig.getRetrofit();
         Api service = retrofit.create(Api.class);
 
-        Call<ServerResponse> call = service.getRestaurantList();
+        Call<ServerResponse> call = service.getRestaurantList(Config.user_id);
         call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {

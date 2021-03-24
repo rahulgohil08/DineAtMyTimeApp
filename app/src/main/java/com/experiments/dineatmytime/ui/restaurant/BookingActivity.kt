@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.experiments.dineatmytime.R
@@ -13,6 +14,7 @@ import com.experiments.dineatmytime.adapters.ChipAdapter
 import com.experiments.dineatmytime.databinding.ActivityBookingBinding
 import com.experiments.dineatmytime.databinding.LayoutSelectProductsDialogBinding
 import com.experiments.dineatmytime.model.Menu
+import com.experiments.dineatmytime.model.Offer
 import com.experiments.dineatmytime.model.RestaurantDetails
 import com.experiments.dineatmytime.model.Table
 import com.experiments.dineatmytime.network.ApiService
@@ -38,6 +40,10 @@ class BookingActivity : AppCompatActivity() {
 
     private val menuList = mutableListOf<Menu>()
     private val tableList = mutableListOf<Table>()
+    private val offerList = mutableListOf<Offer>()
+
+    private val minimumPurchase = 500
+    private var discount = 0
 
     private lateinit var alertDialog: AlertDialog
 
@@ -70,6 +76,7 @@ class BookingActivity : AppCompatActivity() {
         clickListener()
         getTables()
         getMenus()
+        getOffers()
     }
 
 
@@ -81,7 +88,12 @@ class BookingActivity : AppCompatActivity() {
         }
 
         binding.edtTable.setOnItemClickListener { _, _, position, _ ->
-            tableId = tableList.get(position).tableId
+            tableId = tableList[position].tableId
+        }
+
+        binding.edtOffer.setOnItemClickListener { _, _, position, _ ->
+            discount = offerList[position].discountAmount
+            manageOfferDisplay(true)
         }
 
         binding.btnBookTable.setOnClickListener {
@@ -92,16 +104,12 @@ class BookingActivity : AppCompatActivity() {
             }
 
 
-            val intent = Intent(context, PaymentActivity::class.java).also {
-                it.putExtra("table_id", tableId)
-                it.putExtra("res_id", resId)
-                it.putExtra("amount", totalBill)
-                it.putExtra("datetime", dateTime)
-                it.putExtra("menu", binding.edtMenu.editText!!.text.toString().trim())
-            }
-            startActivity(intent)
+
+            checkIfTableBooked()
+
 
         }
+
 
 
         binding.edtDate.setOnClickListener {
@@ -110,6 +118,63 @@ class BookingActivity : AppCompatActivity() {
 
     }
 
+
+    private fun checkIfTableBooked() {
+
+        lifecycleScope.launch {
+            try {
+
+                val apiInterface: ApiService = RetroClass.createService(ApiService::class.java)
+                val response = apiInterface.isAlreadySlot(
+                        resId = resId,
+                        tableId = tableId,
+                        datetime = dateTime
+                )
+
+                Log.d(TAG, "getRestaurantDetails: $response")
+
+                if (response.error!!) {
+                    Config.showToast(context, response.message!!)
+                } else {
+
+                    val intent = Intent(context, PaymentActivity::class.java).also {
+                        it.putExtra("table_id", tableId)
+                        it.putExtra("res_id", resId)
+                        it.putExtra("amount", totalBill)
+                        it.putExtra("discount", discount)
+                        it.putExtra("datetime", dateTime)
+                        it.putExtra("menu", binding.edtMenu.editText!!.text.toString().trim())
+                    }
+                    startActivity(intent)
+                }
+
+            } catch (exception: Exception) {
+                Config.showToast(context, exception.message.toString())
+            }
+        }
+
+
+    }
+
+
+    private fun manageOfferDisplay(hasDiscount: Boolean = false) {
+        binding.edtOfferContainer.isVisible = totalBill >= minimumPurchase
+
+        if (totalBill >= minimumPurchase) {
+
+            discount = if (!hasDiscount) {
+                offerList[0].discountAmount
+            } else {
+                discount
+            }
+
+            binding.btnBookTable.text = "Pay Rs. ${totalBill - discount} (Discount $discount)"
+
+        } else {
+            discount = 0
+            binding.btnBookTable.text = "Pay Rs. $totalBill"
+        }
+    }
 
     /*--------------------------------- Handle Toolbar --------------------------------*/
 
@@ -190,6 +255,43 @@ class BookingActivity : AppCompatActivity() {
     }
 
 
+    /*--------------------------------- Offer List --------------------------------*/
+
+
+    private fun getOffers() {
+        lifecycleScope.launch {
+            try {
+
+                val apiInterface: ApiService = RetroClass.createService(ApiService::class.java)
+                val response = apiInterface.getOffers(resId)
+
+                offerList.clear()
+                offerList.addAll(response.offerList!!)
+
+
+                val lData: ArrayList<String> = ArrayList()
+
+                for (myData in offerList) {
+                    lData.add("${myData.promoCode} - Rs. ${myData.discountAmount}")
+                }
+
+                val arrayAdapter = ArrayAdapter(
+                        context,
+                        R.layout.dropdown_item,
+                        lData
+                )
+
+                binding.edtOffer.setText(lData[0])
+                discount = offerList[0].discountAmount
+                binding.edtOffer.setAdapter(arrayAdapter)
+
+            } catch (exception: Exception) {
+                Config.showToast(context, exception.message.toString())
+            }
+        }
+    }
+
+
     /*----------------------------------------- Select Products Dialog -------------------------------*/
 
     private fun displaySelectMenuDialog() {
@@ -231,8 +333,9 @@ class BookingActivity : AppCompatActivity() {
                 }
             }
 
+            manageOfferDisplay()
 
-            binding.btnBookTable.text = "Pay Rs. $totalBill"
+
 
             binding.edtMenu.editText!!.setText(products)
             binding.edtMenu.editText!!.setSelection(binding.edtMenu.editText!!.length())
@@ -274,21 +377,18 @@ class BookingActivity : AppCompatActivity() {
         materialDatePicker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
 
         materialDatePicker.addOnPositiveButtonClickListener {
-            var spf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-            var newDate: Date? = null
-            try {
-                newDate = spf.parse(materialDatePicker.headerText)
 
-                spf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                date = spf.format(newDate ?: "")
+            try {
+
+                val spf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                date = spf.format(it)
 
                 displayTimePicker()
 
             } catch (e: ParseException) {
-                e.printStackTrace()
+                Log.d(TAG, "displayDatePicker: ${e.message}")
                 Config.showToast(context, e.message)
             }
-
         }
 
     }

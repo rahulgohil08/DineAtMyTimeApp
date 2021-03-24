@@ -36,7 +36,10 @@ public interface Api {
 
     /*--------------------------- GET Restaurant List --------------------------------*/
 
-    @GET(my_url + "get_restaurant_list")
-    Call<ServerResponse> getRestaurantList();
+    @FormUrlEncoded
+    @POST(my_url + "get_restaurant_list")
+    Call<ServerResponse> getRestaurantList(
+            @Field("cust_id") int id
+    );
 
 }

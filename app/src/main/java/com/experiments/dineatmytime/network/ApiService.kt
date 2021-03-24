@@ -38,6 +38,17 @@ interface ApiService {
     ): ServerResponse
 
 
+    /*------------------------------------ Is Already Booked ------------------------------------*/
+
+    @FormUrlEncoded
+    @POST(apiUrl + "is_already_slot")
+    suspend fun isAlreadySlot(
+            @Field("res_id") resId: Int,
+            @Field("table_id") tableId: Int,
+            @Field("datetime") datetime: String,
+    ): ServerResponse
+
+
     /*------------------------------------ Place Order ------------------------------------*/
 
     @FormUrlEncoded
@@ -47,6 +58,7 @@ interface ApiService {
             @Field("res_id") resId: Int,
             @Field("table_id") tableId: Int,
             @Field("amount") amount: Int,
+            @Field("discount") discount: Int,
             @Field("menu") menu: String,
             @Field("datetime") datetime: String,
     ): ServerResponse
@@ -58,6 +70,15 @@ interface ApiService {
     @POST(apiUrl + "get_booking_history")
     suspend fun getBookings(
             @Field("cust_id") custId: Int,
+    ): ServerResponse
+
+
+    /*------------------------------------ Offer List ------------------------------------*/
+
+    @FormUrlEncoded
+    @POST(apiUrl + "get_offer_list")
+    suspend fun getOffers(
+            @Field("res_id") resId: Int,
     ): ServerResponse
 
 
