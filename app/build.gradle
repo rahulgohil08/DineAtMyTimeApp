@@ -80,4 +80,7 @@ dependencies {
     // Payment Gateway implementation
     implementation 'com.razorpay:checkout:1.6.6'
 
+    //Coil Image Loading
+    implementation 'io.coil-kt:coil:1.1.1'
+
 }

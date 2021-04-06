@@ -1,5 +1,6 @@
 package com.experiments.dineatmytime.network
 
+import com.experiments.dineatmytime.network.ApiService.Companion.apiUrl
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -11,7 +12,48 @@ interface ApiService {
     }
 
 
-    /*------------------------------------ Restaurant List ------------------------------------*/
+    /*------------------------------------User Profile  ------------------------------------*/
+
+    @FormUrlEncoded
+    @POST(apiUrl + "get_user_profile")
+    suspend fun getUserProfile(
+            @Field("cust_id") custId: Int,
+    ): ServerResponse
+
+
+/*------------------------------------ Edit User Profile  ------------------------------------*/
+
+    @FormUrlEncoded
+    @POST(apiUrl + "edit_user_profile")
+    suspend fun editUserProfile(
+            @Field("cust_name") name: String,
+            @Field("cust_address") address: String,
+            @Field("cust_id") custId: Int,
+    ): ServerResponse
+
+
+/*------------------------------------ Edit Profile Image ------------------------------------*/
+
+    @FormUrlEncoded
+    @POST(apiUrl + "update_profile_image")
+    suspend fun updateProfileImage(
+            @Field("profile_image") profileImage: String,
+            @Field("cust_id") custId: Int,
+    ): ServerResponse
+
+
+/*------------------------------------ Change Password---------------------------------------------------*/
+
+    @FormUrlEncoded
+    @POST(apiUrl + "change_password")
+    suspend fun changePassword(
+            @Field("old") oldPassword: String,
+            @Field("newpwd") newPassword: String,
+            @Field("cust_id") custId: Int,
+    ): ServerResponse
+
+
+/*------------------------------------ Restaurant List ------------------------------------*/
 
     @FormUrlEncoded
     @POST(apiUrl + "get_restaurant_details")
@@ -20,7 +62,7 @@ interface ApiService {
     ): ServerResponse
 
 
-    /*------------------------------------ Table List ------------------------------------*/
+/*------------------------------------ Table List ------------------------------------*/
 
     @FormUrlEncoded
     @POST(apiUrl + "get_restaurant_tables")
@@ -29,7 +71,7 @@ interface ApiService {
     ): ServerResponse
 
 
-    /*------------------------------------ Menu List ------------------------------------*/
+/*------------------------------------ Menu List ------------------------------------*/
 
     @FormUrlEncoded
     @POST(apiUrl + "get_restaurant_menus")
@@ -38,7 +80,7 @@ interface ApiService {
     ): ServerResponse
 
 
-    /*------------------------------------ Is Already Booked ------------------------------------*/
+/*------------------------------------ Is Already Booked ------------------------------------*/
 
     @FormUrlEncoded
     @POST(apiUrl + "is_already_slot")
@@ -49,7 +91,7 @@ interface ApiService {
     ): ServerResponse
 
 
-    /*------------------------------------ Place Order ------------------------------------*/
+/*------------------------------------ Place Order ------------------------------------*/
 
     @FormUrlEncoded
     @POST(apiUrl + "place_order")
@@ -64,7 +106,7 @@ interface ApiService {
     ): ServerResponse
 
 
-    /*------------------------------------ Booking List ------------------------------------*/
+/*------------------------------------ Booking List ------------------------------------*/
 
     @FormUrlEncoded
     @POST(apiUrl + "get_booking_history")
@@ -73,7 +115,7 @@ interface ApiService {
     ): ServerResponse
 
 
-    /*------------------------------------ Offer List ------------------------------------*/
+/*------------------------------------ Offer List ------------------------------------*/
 
     @FormUrlEncoded
     @POST(apiUrl + "get_offer_list")

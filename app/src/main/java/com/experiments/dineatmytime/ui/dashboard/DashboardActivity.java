@@ -5,23 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.experiments.dineatmytime.MainActivity;
+import com.bumptech.glide.Glide;
 import com.experiments.dineatmytime.R;
 import com.experiments.dineatmytime.adapters.RestaurantAdapter;
 import com.experiments.dineatmytime.databinding.ActivityDashboardBinding;
 import com.experiments.dineatmytime.model.Restaurant;
-import com.experiments.dineatmytime.model.RestaurantDetails;
 import com.experiments.dineatmytime.network.Api;
 import com.experiments.dineatmytime.network.AppConfig;
 import com.experiments.dineatmytime.network.ServerResponse;
 import com.experiments.dineatmytime.ui.booking.BookingHistoryActivity;
 import com.experiments.dineatmytime.ui.login.Login;
-import com.experiments.dineatmytime.ui.restaurant.BookingActivity;
+import com.experiments.dineatmytime.ui.profile.ChangePasswordActivity;
+import com.experiments.dineatmytime.ui.profile.ProfileActivity;
 import com.experiments.dineatmytime.ui.restaurant.RestaurantDetailsActivity;
 import com.experiments.dineatmytime.utils.Config;
 import com.experiments.dineatmytime.utils.SharedPrefManager;
@@ -84,10 +86,30 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         binding.includedContent.recyclerView.setHasFixedSize(true);
         binding.includedContent.recyclerView.setAdapter(restaurantAdapter);
 
-
+        manageHeaderView();
         getRestaurantDataFromServer();
 
     }
+
+    /*--------------------------------- Manage header View -----------------------------------------*/
+
+
+    private void manageHeaderView() {
+
+        View header = binding.nav.getHeaderView(0);
+        TextView tv = header.findViewById(R.id.header_user_name);
+        ImageView profileImage = header.findViewById(R.id.profile_image);
+        tv.setText(sharedPrefManager.getString("name"));
+
+
+        Glide.with(activity)
+                .load(Config.profileImageUrl + sharedPrefManager.getString("profile_image"))
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(profileImage);
+
+    }
+
 
 
     /*----------------------------- Get Restaurant Data From Server ----------------------------*/
@@ -162,6 +184,16 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 openActivity(BookingHistoryActivity.class);
                 return true;
 
+
+            case R.id.profile:
+                openActivity(ProfileActivity.class);
+                return true;
+
+
+            case R.id.change_password:
+                openActivity(ChangePasswordActivity.class);
+                return true;
+
             default:
                 return false;
         }
@@ -181,5 +213,13 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Intent intent = new Intent(activity, RestaurantDetailsActivity.class);
         intent.putExtra("res_id", Integer.parseInt(restaurant.getResId()));
         startActivity(intent);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        manageHeaderView();
     }
 }

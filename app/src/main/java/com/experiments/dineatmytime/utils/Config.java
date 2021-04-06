@@ -11,6 +11,7 @@ public class Config {
 
 //    http://192.168.0.112/dine_my_time/restaurants/95502ebb7eea5108dc43ed65970151a8.jpg
 
+    public static String profileImageUrl = url + "profile/";
     public static String restaurantImageUrl = url + "restaurants/";
     public static String restaurantSeatUrl = url + "seat_map/";
 

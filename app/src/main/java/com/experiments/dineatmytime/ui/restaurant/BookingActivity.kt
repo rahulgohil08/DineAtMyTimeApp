@@ -83,6 +83,10 @@ class BookingActivity : AppCompatActivity() {
     private fun clickListener() {
 
 
+        binding.seatImage.setOnClickListener {
+            handleZoomedImage()
+        }
+
         binding.edtMenu.editText!!.setOnClickListener {
             displaySelectMenuDialog()
         }
@@ -118,6 +122,17 @@ class BookingActivity : AppCompatActivity() {
 
     }
 
+    /*--------------------------------- Handle Zoomed Image --------------------------------*/
+
+
+    private fun handleZoomedImage() {
+
+        binding.zoomedImage.isVisible = !binding.zoomedImage.isVisible
+        binding.scrollView.isVisible = !binding.zoomedImage.isVisible
+
+    }
+
+    /*--------------------------------- Check Whether Table Available --------------------------------*/
 
     private fun checkIfTableBooked() {
 
@@ -250,6 +265,10 @@ class BookingActivity : AppCompatActivity() {
                 Glide.with(context)
                         .load(Config.restaurantSeatUrl + restaurantDetails.seatImage)
                         .into(seatImage)
+
+                Glide.with(context)
+                        .load(Config.restaurantSeatUrl + restaurantDetails.seatImage)
+                        .into(zoomedImage)
             }
         }
     }
@@ -419,6 +438,16 @@ class BookingActivity : AppCompatActivity() {
 
         materialTimePicker.show(supportFragmentManager, "fragment_tag")
 
+    }
+
+
+    override fun onBackPressed() {
+
+        if (binding.zoomedImage.isVisible) {
+            handleZoomedImage()
+            return
+        }
+        super.onBackPressed()
     }
 
 }

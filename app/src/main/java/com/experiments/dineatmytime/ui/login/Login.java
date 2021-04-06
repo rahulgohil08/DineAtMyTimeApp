@@ -132,6 +132,7 @@ public class Login extends AppCompatActivity {
         SharedPrefManager sharedPrefManager = new SharedPrefManager(context);
         sharedPrefManager.setInt("id", user.getId());
         sharedPrefManager.setString("name", user.getName());
+        sharedPrefManager.setString("profile_image", user.getProfileImage());
 
         sharedPref();
     }
